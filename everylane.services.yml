@@ -1,0 +1,20 @@
+services:
+  everylane.tweeter:
+    class: Drupal\everylane\Tweeter
+    arguments: ['@database', '@file_system', '@everylane.data_fetcher', '@everylane.data_cleaner', '@everylane.street_viewer']
+
+  everylane.data_cleaner:
+    class: Drupal\everylane\DataCleaner
+    arguments: ['@database']
+
+  everylane.data_fetcher:
+    class: Drupal\everylane\DataFetcher
+    arguments: ['@database', '@everylane.data_cleaner']
+
+  everylane.static_mapper:
+    class: Drupal\everylane\StaticMapper
+    arguments: ['@database', '@file_system', '@everylane.data_fetcher', '@everylane.data_cleaner']
+
+  everylane.street_viewer:
+    class: Drupal\everylane\StreetViewer
+    arguments: ['@database', '@file_system', '@everylane.data_fetcher', '@everylane.data_cleaner']
