@@ -24,7 +24,7 @@ Inspired by the [everylot bots like everylotphilly](https://twitter.com/everylot
 I'll be posting TODOs into the issues section. Level of interest from other parties will determine how much time I spend making this adaptable to other cities.
 
 ### Requirements
-* A dataset with your bike lane network. See "data source details" below.
+* A dataset with your bike lane network. See [data source details](#data-source-details) below.
 * Google maps API key, allowing Static Maps API and Street View Static API
 * Twitter developer app: access key, access secret, consumer key, consumer secret
 
@@ -79,7 +79,7 @@ drush cset everylane.settings minimum_time_between_tweets "now"
 drush cron
 ```
 
-## Data source details
+## Data source details(#data-source-details)
 You'll need to get your dataset into Drupal's `bike_network` database table. As of now, the easiest way to do this is probably importing from CSV to mysql.
 Minimum required fields are:
 
