@@ -79,7 +79,7 @@ drush cset everylane.settings minimum_time_between_tweets "now"
 drush cron
 ```
 
-## Data source details(#data-source-details)
+## Data source details
 You'll need to get your dataset into Drupal's `bike_network` database table. As of now, the easiest way to do this is probably importing from CSV to mysql.
 Minimum required fields are:
 
