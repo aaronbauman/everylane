@@ -5,3 +5,18 @@ everylane.settings:
     minimum_time_between_tweets:
       type: string
       label: 'minimum time between tweets'
+    twitter:
+      type: mapping
+      mapping:
+        oauth_access_token:
+          type: string
+          label: 'oauth access token'
+        oauth_access_token_secret:
+          type: string
+          label: 'oauth secret'
+        consumer_key:
+          type: string
+          label: 'consumer key'
+        consumer_secret:
+          type: string
+          label: 'consumer secret'
