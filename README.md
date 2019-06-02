@@ -2,7 +2,7 @@ Everylane
 ---------
 
 #### Who
-I, Aaron Bauman, am a Drupal developer and a person who rides a bike.
+I am a Drupal developer, and I like to ride bikes.
 
 #### What
 This Drupal module is designed to orchestrate a twitter bot into posting pictures of bike lanes.
@@ -26,3 +26,5 @@ I'll be posting TODOs into the issues section. Level of interest from other part
 
 ## Sources
 For Philadelphia, primary data source is [https://www.opendataphilly.org/dataset/bike-network](https://www.opendataphilly.org/dataset/bike-network)
+
+The Map there is old, but I posted a new one here from most recent data (9 months old as of this writing): [https://aaron-bauman.carto.com/builder/50af099f-3e5a-47b3-8ab9-a604528a4f0d/embed](https://aaron-bauman.carto.com/builder/50af099f-3e5a-47b3-8ab9-a604528a4f0d/embed)
