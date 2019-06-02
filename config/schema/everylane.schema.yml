@@ -1,0 +1,7 @@
+everylane.settings:
+  type: config_object
+  label: 'Everylane settings'
+  mapping:
+    minimum_time_between_tweets:
+      type: string
+      label: 'minimum time between tweets'

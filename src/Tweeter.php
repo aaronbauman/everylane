@@ -37,7 +37,9 @@ class Tweeter {
    */
   public function checkTimestamp() {
     $timestamp = \Drupal::state()->get("everylane_last_timestamp", 0);
-    if ($timestamp < strtotime(\Drupal::config('everylane')->get('minimum_time_between_tweets'))) {
+    $cutoff = \Drupal::state()->get('minimum_time_between_tweets',
+      \Drupal::config('everylane.settings')->get('minimum_time_between_tweets'));
+    if ($timestamp < strtotime($cutoff)) {
       return TRUE;
     }
   }
@@ -127,7 +129,7 @@ class Tweeter {
 
   public function getStreetTweetText($groups) {
     $segment = current(current($groups));
-    $name = str_replace('  ', ' ', ucwords(strtolower($segment->streetname)));
+    $name = trim(str_replace('  ', ' ', ucwords(strtolower($segment->streetname))));
     $count = count($groups);
     $length = 0;
     $types = [];
@@ -139,12 +141,14 @@ class Tweeter {
     }
     $length = number_format($length / 5280, 2);
     $types = implode(', ', $types);
-    $count_word = $count == 1 ? 'segment' : 'segments';
-    return "$name
-$count $count_word
-$length miles
-
-$types";
+    $type_word = count($types) === 1 ? 'type' : 'types';
+    $text = "$name
+length: $length miles
+bike lane $type_word: $types";
+    if (strlen($text) > 255) {
+      $text = substr($text, 0, 255);
+    }
+    return $text;
   }
 
   /**
@@ -162,6 +166,32 @@ $types";
       return FALSE;
     }
     return $parent_tweet;
+  }
+
+  public function getSegmentTweetText(Segment $segment, $i) {
+    $point = $segment->LineString->geometryN($i+1);
+    $name = trim(str_replace('  ', ' ', ucwords(strtolower($segment->streetname))));
+
+    // If we're not at the endpoint, get bearing from next point.
+    if ($i + 2 <= $segment->LineString->numPoints()) {
+      $nextPoint = $segment->LineString->geometryN($i + 2);
+      $bearing = $this->streetViewer->getBearing($point, $nextPoint);
+    }
+    else {
+      // If we are at the endpoint, get bearing from previous.
+      $prevPoint = $segment->LineString->geometryN($i - 1);
+      $bearing = $this->streetViewer->getBearing($prevPoint, $point);
+    }
+
+    $type = $segment->type;
+
+    $text = "$name
+bike lane type: $type
+https://google.com/maps?q=" . $point->y() . ',' . $point->x();
+    if (strlen($text) > 255) {
+      $text = substr($text, 0, 255);
+    }
+    return $text;
   }
 
   /**
@@ -187,21 +217,9 @@ $types";
     \Drupal::logger('media response')->info(print_r($media_response));
     $media_response = json_decode($media_response);
     $point = $segment->LineString->geometryN($i+1);
-
-    // If we're not at the endpoint, get bearing from next point.
-    if ($i + 2 <= $segment->LineString->numPoints()) {
-      $nextPoint = $segment->LineString->geometryN($i + 2);
-      $bearing = $this->streetViewer->getBearing($point, $nextPoint);
-    }
-    else {
-      // If we are at the endpoint, get bearing from previous.
-      $prevPoint = $segment->LineString->geometryN($i - 1);
-      $bearing = $this->streetViewer->getBearing($prevPoint, $point);
-    }
-
     $tweet = [
       'media_ids' => $media_response->media_id,
-      'status' => self::LINK_TEMPLATE . '?viewpoint=' . $point->y() . ',' . $point->x() . '&heading=' . $bearing,
+      'status' => $this->getSegmentTweetText($segment, $i),
       'long' => $point->x(),
       'lat' => $point->y(),
       'display_coordinates' => 'true',

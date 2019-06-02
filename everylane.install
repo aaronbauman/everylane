@@ -1,0 +1,224 @@
+<?php
+
+/**
+ * Implements hook_schema.
+ */
+function everylane_schema() {
+  $schema['bike_network'] = [
+    'description' => 'Bike network definition',
+    'primary key' => [
+      'seg_id',
+    ],
+    'indexes' => [
+      'min_coord' => [
+        'minx', 'miny',
+      ],
+      'streetname' => [
+        'streetname',
+      ],
+    ],
+    'fields' => [
+      'the_geom' => [
+        'description' => '',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'streetname' => [
+        'description' => '',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'txt' => [
+        'description' => '',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'objectid' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'seg_id' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'cartodb_id' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'st_code' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'oneway' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => FALSE,
+      ],
+      'class' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'type' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => FALSE,
+      ],
+      'shape__length' => [
+        'description' => '',
+        'type' => 'float',
+        'not null' => FALSE,
+      ],
+      'tweeted' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'last_tweet' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'note' => [
+        'description' => '',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'segment_count' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'grouping_streetname' => [
+        'description' => '',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'static_map_generated' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'images_fetched' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'minx' => [
+        'description' => '',
+        'type' => 'float',
+        'size' => 'big',
+        'not null' => TRUE,
+        'default' => '0',
+      ],
+      'miny' => [
+        'description' => '',
+        'type' => 'float',
+        'size' => 'big',
+        'not null' => TRUE,
+        'default' => '0',
+      ],
+      'maxx' => [
+        'description' => '',
+        'type' => 'float',
+        'size' => 'big',
+        'not null' => TRUE,
+        'default' => '0',
+      ],
+      'maxy' => [
+        'description' => '',
+        'type' => 'float',
+        'size' => 'big',
+        'not null' => TRUE,
+        'default' => '0',
+      ],
+      'group' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+      'order' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+      ],
+    ],
+  ];
+
+  $schema['bike_tweets'] = [
+    'description' => 'Track which tweets have been sent.',
+    'primary key' => ['id'],
+    'fields' => [
+      'id' => [
+        'description' => '',
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ],
+      'seg_id' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'media_id' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => FALSE,
+      ],
+      'tweet_id' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => FALSE,
+      ],
+      'in_reply_to_id' => [
+        'description' => '',
+        'type' => 'int',
+        'size' => 'big',
+        'not null' => FALSE,
+      ],
+      'filename' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => FALSE,
+      ],
+      'sent' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+      'text' => [
+        'description' => '',
+        'type' => 'varchar',
+        'length' => '255',
+        'not null' => FALSE,
+      ],
+      'grouping_streetname' => [
+        'description' => '',
+        'type' => 'text',
+        'not null' => FALSE,
+      ],
+      'i' => [
+        'description' => '',
+        'type' => 'int',
+        'not null' => FALSE,
+      ],
+    ],
+  ];
+
+  return $schema;
+}
