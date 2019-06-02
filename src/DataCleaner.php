@@ -18,7 +18,7 @@ class DataCleaner {
       $street = 'DELAWARE AVE';
     }
     // Remove leading directionals.
-    $street = trim(preg_replace('^[NESW]\ ', '', $street));
+    $street = trim(preg_replace('/^[NESW]\ /', '', $street));
     return str_replace(' ', '_', strtolower(trim($street)));
   }
 
