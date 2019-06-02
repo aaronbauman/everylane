@@ -5,6 +5,9 @@ everylane.settings:
     minimum_time_between_tweets:
       type: string
       label: 'minimum time between tweets'
+    google_maps_api_key:
+      type: string
+      label: 'google maps api key'
     twitter:
       type: mapping
       mapping:

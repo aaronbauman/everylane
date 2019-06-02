@@ -12,8 +12,6 @@ class StaticMapper {
 
   const SCALE = 2;
 
-  const API_KEY = GOOGLE_MAPS_API_KEY;
-
   const COLOR = '0xff0000ff';
 
   const WEIGHT = '4';
@@ -53,7 +51,8 @@ class StaticMapper {
     if (empty($paths)) {
       return;
     }
-    $query = 'size=' . self::SIZE . '&key=' . self::API_KEY . '&scale=' . self::SCALE;
+    $query = 'size=' . self::SIZE . '&key=' . \Drupal::config('everylane.settings')->get('google_maps_api_key')
+ . '&scale=' . self::SCALE;
     $query .= $paths;
     $url = self::STATIC_MAPS_API_ENDPOINT . '?' . $query;
     return $url;

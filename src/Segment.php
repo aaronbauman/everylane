@@ -22,20 +22,28 @@ class Segment {
   public $LineString;
   public $streetname;
   public $valid;
+  public $wkt;
+
   public function __construct(\stdClass $row) {
     foreach (get_object_vars($row) as $prop => $val) {
       $this->$prop = $val;
     }
-    $this->LineString = \Drupal::service('geophp.geophp')->load($row->txt, 'wkt');
-    if (!$this->LineString instanceof MultiLineString || !$this->LineString->geometryN(1) instanceof LineString) {
-      $this->valid = FALSE;
-    }
     $this->valid = TRUE;
-    /** @var Segment $linestring */
-    $this->LineString = $this->LineString->geometryN(1);
+    $this->LineString = \Drupal::service('geophp.geophp')->load($row->wkt, 'wkt');
+    if (!$this->LineString instanceof LineString) {
+      if (!$this->LineString instanceof MultiLineString || !$this->LineString->geometryN(1) instanceof LineString) {
+        $this->valid = FALSE;
+      }
+      $this->LineString = $this->LineString->geometryN(1);
+    }
     $this->subsectPoints();
   }
 
+  /**
+   * Divide the LineString into points no more than ~360 feet apart.
+   *
+   * Adjust "MAX_DISTANCE" to tweak this parameter.
+   */
   protected function subsectPoints() {
     $new_points = [];
     for ($i = 0; $i < $this->LineString->numPoints() - 1; $i++) {
@@ -58,6 +66,12 @@ class Segment {
     $this->LineString = new LineString($new_points);
   }
 
+  /**
+   * Given 2 points, recursively divide them into points no more than MAX_DISTANCE apart.
+   *
+   * @return Point[]
+   *   The subdivided point array, suitable for a new LineString.
+   */
   protected function bisect(Point $point1, Point $point2) {
     \Drupal::logger('bisect')->info('bisecting ' . print_r(func_get_args(), 1));
     $x = ($point1->x() + $point2->x()) / 2;

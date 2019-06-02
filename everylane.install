@@ -18,48 +18,17 @@ function everylane_schema() {
       ],
     ],
     'fields' => [
-      'the_geom' => [
-        'description' => '',
-        'type' => 'text',
-        'not null' => FALSE,
-      ],
       'streetname' => [
         'description' => '',
         'type' => 'text',
         'not null' => FALSE,
       ],
-      'txt' => [
+      'wkt' => [
         'description' => '',
         'type' => 'text',
         'not null' => FALSE,
       ],
-      'objectid' => [
-        'description' => '',
-        'type' => 'int',
-        'not null' => FALSE,
-      ],
       'seg_id' => [
-        'description' => '',
-        'type' => 'int',
-        'not null' => FALSE,
-      ],
-      'cartodb_id' => [
-        'description' => '',
-        'type' => 'int',
-        'not null' => FALSE,
-      ],
-      'st_code' => [
-        'description' => '',
-        'type' => 'int',
-        'not null' => FALSE,
-      ],
-      'oneway' => [
-        'description' => '',
-        'type' => 'varchar',
-        'length' => '255',
-        'not null' => FALSE,
-      ],
-      'class' => [
         'description' => '',
         'type' => 'int',
         'not null' => FALSE,
@@ -96,6 +65,7 @@ function everylane_schema() {
         'description' => '',
         'type' => 'int',
         'not null' => FALSE,
+        'default' => 0,
       ],
       'grouping_streetname' => [
         'description' => '',

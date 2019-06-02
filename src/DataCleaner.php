@@ -13,10 +13,12 @@ class DataCleaner {
   }
 
   public function cleanStreetName($street) {
+    // Philly special.
     if (strpos($street, 'CHRISTOPHER COLUMBUS') || strpos($street, 'DELAWARE')) {
       $street = 'DELAWARE AVE';
     }
-    $street = trim(ltrim($street, 'NESW'));
+    // Remove leading directionals.
+    $street = trim(preg_replace('^[NESW]\ ', '', $street));
     return str_replace(' ', '_', strtolower(trim($street)));
   }
 

@@ -29,7 +29,7 @@ class Tweeter {
     $this->dataFetcher = $dataFetcher;
     $this->fileSystem = $file_system;
     $this->streetViewer = $street_viewer;
-    $this->twitter = new \TwitterAPIExchange(\Drupal::config('everylane')->get('twitter'));
+    $this->twitter = new \TwitterAPIExchange(\Drupal::config('everylane.settings')->get('twitter'));
   }
 
   /**
@@ -39,7 +39,7 @@ class Tweeter {
     $timestamp = \Drupal::state()->get("everylane_last_timestamp", 0);
     $cutoff = \Drupal::state()->get('minimum_time_between_tweets',
       \Drupal::config('everylane.settings')->get('minimum_time_between_tweets'));
-    if ($timestamp < strtotime($cutoff)) {
+    if (time() > strtotime($cutoff, $timestamp)) {
       return TRUE;
     }
   }

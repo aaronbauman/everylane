@@ -14,8 +14,6 @@ class StreetViewer {
 
   const FOV  = '140';
 
-  const API_KEY = GOOGLE_MAPS_API_KEY;
-
   const STREETVIEW_API_ENDPOINT = 'https://maps.googleapis.com/maps/api/streetview';
 
   protected $database;
@@ -114,7 +112,7 @@ class StreetViewer {
 
     $query = [
       'size' => self::SIZE,
-      'key' => self::API_KEY,
+      'key' => \Drupal::config('everylane.settings')->get('google_maps_api_key'),
       'heading' => $bearing,
       'location' => $point->y() . ',' . $point->x(),
       'fov' => self::FOV,
