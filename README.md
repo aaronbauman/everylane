@@ -89,8 +89,11 @@ For Philadelphia, primary data source is [https://www.opendataphilly.org/dataset
 The Map there is old, but I posted a new one here from most recent data (9 months old as of this writing): [https://aaron-bauman.carto.com/builder/50af099f-3e5a-47b3-8ab9-a604528a4f0d/embed](https://aaron-bauman.carto.com/builder/50af099f-3e5a-47b3-8ab9-a604528a4f0d/embed)
 
 ## Known limitations
-* Very rudimentary duplicate filtering. Depending on the source data, you may end up generating some duplicates or near-duplicates.
-* Overpass and underpass handling is limited. When two streets overlap vertically, google street view static API doesn't provide any way to specify which layer to capture. The result is some street view images are highways instead of underpasses.
-* No handling of "no image found" response
+Patches welcome for any of these or other issues:
+* No handling of "no image found" response. https://github.com/aaronbauman/everylane/issues/1
+* Overpass and underpass handling is limited. When two streets overlap vertically, google street view static API doesn't provide any way to specify which layer to capture. The result is some street view images are highways instead of underpasses. https://github.com/aaronbauman/everylane/issues/2
+* Very rudimentary duplicate filtering. Depending on the source data, you may end up generating some duplicates or near-duplicates. https://github.com/aaronbauman/everylane/issues/3
 * Limited off-street street view availability. Google's street view is mostly auto-routes. Some off-road paths are available.
 * Bearings may be 180 degrees opposite of traffic / bike routes. This mostly depends on whether the geometry is defined in the same order as the flow of traffic.
+* Lots of settings and configurations are hard-coded. https://github.com/aaronbauman/everylane/issues/4
+* Source data must be manually imported. https://github.com/aaronbauman/everylane/issues/5
