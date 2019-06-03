@@ -38,7 +38,7 @@ curl -sSL https://www.drupal.org/download-latest/tar.gz | tar -xz --strip-compon
 php core/scripts/drupal quick-start standard
 
 # Add and enable drush and everylane module
-composer require drupal/everylane drush/drush
+composer require aaronbauman/everylane drush/drush
 drush en everylane -y
 ```
 
