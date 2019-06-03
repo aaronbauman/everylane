@@ -31,11 +31,11 @@ I'll be posting TODOs into the issues section. Level of interest from other part
 #### Set up Drupal
 These steps will install a minimal Drupal site on your local machine to run Everylane, but local installation is not a requirement. See [https://www.drupal.org/docs/official_docs/en/_evaluator_guide.html](https://www.drupal.org/docs/official_docs/en/_evaluator_guide.html) for more information.
 ```
-# Install a standard Drupal site locally
+# Install a minimal Drupal site locally
 mkdir drupal
 cd drupal
 curl -sSL https://www.drupal.org/download-latest/tar.gz | tar -xz --strip-components=1
-php core/scripts/drupal quick-start standard
+php core/scripts/drupal quick-start minimal
 
 # Add and enable drush and everylane module
 # Note: everylane drush commands require drush/drush:^9
