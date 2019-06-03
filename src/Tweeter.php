@@ -47,7 +47,7 @@ class Tweeter {
   public function generateNextTweet($street = '') {
     if (!$this->checkTimestamp()) {
       \Drupal::logger('everylane')->info('Too early to tweet');
-      return;
+      return FALSE;
     }
     if (empty($street)) {
       $street = $this->dataFetcher->nextStreetnameForTweet();
@@ -59,13 +59,13 @@ class Tweeter {
     $groups = $this->dataFetcher->getNextTwitterSegmentSet($street);
     if (empty($groups)) {
       \Drupal::logger('everylane')->critical('No groups fetched');
-      return;
+      return FALSE;
     }
     if ($parent_tweet = $this->generateTweetForStreet($street, $groups)) {
       if ($parent_tweet == FALSE) {
         \Drupal::logger('everylane')->info('Tweet sent. Timestamp updated.');
         \Drupal::state()->set("everylane_last_timestamp", time());
-        return;
+        return TRUE;
       }
       foreach ($groups as $segments) {
         foreach ($segments as $segment) {
@@ -73,7 +73,7 @@ class Tweeter {
           if ($parent_tweet == FALSE) {
             \Drupal::logger('everylane')->info('Tweet sent. Timestamp updated.');
             \Drupal::state()->set("everylane_last_timestamp", time());
-            return;
+            return TRUE;
           }
         }
       }
@@ -86,7 +86,7 @@ class Tweeter {
    * Returns FALSE if a tweet gets sent. Otherwise, returns a tweet_id from database.
    */
   public function generateTweetForStreet($street, $groups) {
-    if ($tweet_id = $this->database->query("SELECT tweet_id FROM bike_tweets WHERE grouping_streetname = :street AND seg_id IS NULL", [':street' => $street])->fetchField()) {
+    if ($tweet_id = $this->database->query("SELECT tweet_id FROM bike_tweets WHERE grouping_streetname = :street AND seg_id IS NULL ORDER BY tweet_id DESC", [':street' => $street])->fetchField()) {
       return (object)['id' => $tweet_id];
     }
     $filename = $this->dataFetcher->getStaticMapImagePath($street);
@@ -96,18 +96,30 @@ class Tweeter {
         'media_data' => base64_encode($media)
       ])
       ->performRequest();
-    \Drupal::logger('media response')->info(print_r($media_response));
     $media_response = json_decode($media_response);
+    $json_error = json_last_error();
+    if ($json_error) {
+      \Drupal::logger('everylane')->critical('JSON decoding exception: ' . print_r(json_last_error(), 1));
+    }
 
     $tweet = [
       'media_ids' => $media_response->media_id,
       'status' => $this->getStreetTweetText($groups),
     ];
+
+    // One final check to see if we've already tweeted this.
+    if ($tweet_id = $this->database->query("SELECT tweet_id FROM bike_tweets WHERE text = :text ORDER BY tweet_id DESC", [':text' => $tweet['status']])->fetchField()) {
+      return (object)['id' => $tweet_id];
+    }
+
     $tweet_response = $this->twitter->buildOauth(self::POST_URL, 'POST')
       ->setPostfields($tweet)
       ->performRequest();
-    \Drupal::logger('tweet response')->info(print_r($tweet_response));
     $tweet_response = json_decode($tweet_response);
+    $json_error = json_last_error();
+    if ($json_error) {
+      \Drupal::logger('everylane')->critical('JSON decoding exception: ' . print_r(json_last_error(), 1));
+    }
 
     try {
       $query = $this->database->insert('bike_tweets');
@@ -140,8 +152,8 @@ class Tweeter {
       }
     }
     $length = number_format($length / 5280, 2);
-    $types = implode(', ', $types);
     $type_word = count($types) === 1 ? 'type' : 'types';
+    $types = implode(', ', $types);
     $text = "$name
 length: $length miles
 bike lane $type_word: $types";
@@ -204,7 +216,7 @@ https://google.com/maps?q=" . $point->y() . ',' . $point->x();
       return $parent_tweet;
     }
 
-    if ($tweet_id = $this->database->query("SELECT tweet_id FROM bike_tweets WHERE seg_id = :seg_id AND i = :i", [':seg_id' => $segment->seg_id, ':i' => $i])->fetchField()) {
+    if ($tweet_id = $this->database->query("SELECT tweet_id FROM bike_tweets WHERE seg_id = :seg_id AND i = :i ORDER BY tweet_id DESC", [':seg_id' => $segment->seg_id, ':i' => $i])->fetchField()) {
       return (object)['id' => $tweet_id];
     }
 
@@ -214,8 +226,13 @@ https://google.com/maps?q=" . $point->y() . ',' . $point->x();
         'media_data' => base64_encode($media)
       ])
       ->performRequest();
-    \Drupal::logger('media response')->info(print_r($media_response));
+    \Drupal::logger('media response')->info(print_r($media_response, 1));
     $media_response = json_decode($media_response);
+    $json_error = json_last_error();
+    if ($json_error) {
+      \Drupal::logger('everylane')->critical('JSON decoding exception: ' . print_r(json_last_error(), 1));
+    }
+
     $point = $segment->LineString->geometryN($i+1);
     $tweet = [
       'media_ids' => $media_response->media_id,
@@ -225,13 +242,23 @@ https://google.com/maps?q=" . $point->y() . ',' . $point->x();
       'display_coordinates' => 'true',
       'in_reply_to_status_id' => $parent_tweet->id,
     ];
+
+    // One final check to see if we've already tweeted this.
+    if ($tweet_id = $this->database->query("SELECT tweet_id FROM bike_tweets WHERE text = :text ORDER BY tweet_id DESC", [':text' => $tweet['status']])->fetchField()) {
+      return (object)['id' => $tweet_id];
+    }
+
     $tweet_response = $this->twitter->buildOauth(self::POST_URL, 'POST')
       ->setPostfields($tweet)
       ->performRequest();
-    \Drupal::logger('tweet response')->info(print_r($tweet_response));
+    \Drupal::logger('tweet response')->info(print_r($tweet_response, 1));
     $tweet_response = json_decode($tweet_response);
-    if (!json_last_error()) {
+    $json_error = json_last_error();
+    if (!$json_error) {
       $parent_tweet = $tweet_response;
+    }
+    else {
+      \Drupal::logger('everylane')->critical('JSON decoding exception: ' . print_r(json_last_error(), 1));
     }
 
     try {

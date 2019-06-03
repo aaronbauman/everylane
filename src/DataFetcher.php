@@ -90,8 +90,6 @@ class DataFetcher {
    * @throws \Exception
    */
   public function sortSegments(array $segments) {
-    \Drupal::logger('everylane')->info('Sorting ' . count($segments) . ' segments');
-
     // Sort segments into groupings, matching head to toe.
     /** @var Segment[][] $groups */
     $groups = [];
@@ -105,20 +103,17 @@ class DataFetcher {
         $group_start = reset($group);
         $group_end = end($group);
         if ($new_segment->LineString->startPoint()->x() == $group_end->LineString->endPoint()->x()) {
-          \Drupal::logger('everylane')->info('Matched segments ' . $group_end->seg_id . ' and ' . $new_segment->seg_id);
           $group[] = $new_segment;
           $match = TRUE;
           break;
         }
         if ($new_segment->LineString->endPoint()->x() == $group_start->LineString->startPoint()->x()) {
-          \Drupal::logger('everylane')->info('Matched segments ' . $group_start->seg_id . ' and ' . $new_segment->seg_id);
           array_unshift($group,  $new_segment);
           $match = TRUE;
           break;
         }
       }
       if (!$match) {
-        \Drupal::logger('everylane')->info('Failed to match ' . $new_segment->seg_id);
         $groups[] = [$new_segment];
       }
     }
@@ -139,7 +134,7 @@ class DataFetcher {
     }
     \Drupal::logger('everylane')->info('Fetching segments for ' . $street);
     $segments = [];
-    $query = $this->database->query('SELECT * FROM bike_network WHERE images_fetched >= 0 AND grouping_streetname = :name ORDER BY minx, miny', [':name' => $street]);
+    $query = $this->database->query('SELECT * FROM bike_network WHERE images_fetched = 0 AND grouping_streetname = :name ORDER BY minx, miny', [':name' => $street]);
     while ($row = $query->fetch()) {
       $segment = new Segment($row);
       \Drupal::logger('everylane')->info('Fetched segment ' . $segment->seg_id);

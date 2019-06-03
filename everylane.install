@@ -31,7 +31,7 @@ function everylane_schema() {
       'seg_id' => [
         'description' => '',
         'type' => 'int',
-        'not null' => FALSE,
+        'not null' => TRUE,
       ],
       'type' => [
         'description' => '',
@@ -111,18 +111,6 @@ function everylane_schema() {
         'size' => 'big',
         'not null' => TRUE,
         'default' => '0',
-      ],
-      'group' => [
-        'description' => '',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
-      ],
-      'order' => [
-        'description' => '',
-        'type' => 'int',
-        'not null' => TRUE,
-        'default' => 0,
       ],
     ],
   ];

@@ -1,0 +1,6 @@
+services:
+  everylane.commands:
+    class: \Drupal\everylane\Commands\EverylaneCommands
+    arguments: ['@database', '@file_system', '@everylane.data_fetcher', '@everylane.data_cleaner', '@everylane.street_viewer', '@everylane.static_mapper', '@everylane.tweeter']
+    tags:
+      - { name: drush.command }

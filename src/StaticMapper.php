@@ -58,28 +58,33 @@ class StaticMapper {
     return $url;
   }
 
-  public function generateNextStaticMap() {
-    $street = $this->dataFetcher->nextStreetnameForStaticMap();
+  public function generateNextStaticMap($street = '') {
+    if (empty($street)) {
+      $street = $this->dataFetcher->nextStreetnameForStaticMap();
+    }
+
     if (!$street) {
       \Drupal::logger('everylane')->info('Failed to fetch next street');
-      return;
+      return FALSE;
     }
     $segments = $this->dataFetcher->segmentSetByStreet($street);
     if (!$street) {
       \Drupal::logger('everylane')->info('Failed to fetch any segments for ' . $street);
-      return;
+      return FALSE;
     }
     $url = $this->fetchStaticMapUrlForSegments($segments);
     if (!$url) {
       \Drupal::logger('everylane')->info('Failed to fetch url for ' . $street);
-      return;
+      return FALSE;
     }
     if ($path = $this->saveStaticMapForStreet($street, $url)) {
       \Drupal::logger('everylane')->info('Static map generated for ' . $street . ' ' . $path);
       $this->database->query("UPDATE bike_network SET static_map_generated = 1 WHERE grouping_streetname = :name", [':name' => $street]);
+      return $street;
     }
     else {
       \Drupal::logger('everylane')->info('Failed to generate static map generated for ' . $street);
+      return FALSE;
     }
   }
 

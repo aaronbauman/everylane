@@ -73,7 +73,6 @@ class Segment {
    *   The subdivided point array, suitable for a new LineString.
    */
   protected function bisect(Point $point1, Point $point2) {
-    \Drupal::logger('bisect')->info('bisecting ' . print_r(func_get_args(), 1));
     $x = ($point1->x() + $point2->x()) / 2;
     $y = ($point1->y() + $point2->y()) / 2;
     $midpoint = new Point($x, $y);

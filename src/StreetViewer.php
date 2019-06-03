@@ -33,7 +33,6 @@ class StreetViewer {
     $lat1 = $point1->y();
     $lat2 = $point2->y();
     $bearing = (rad2deg(atan2(sin(deg2rad($lon2) - deg2rad($lon1)) * cos(deg2rad($lat2)), cos(deg2rad($lat1)) * sin(deg2rad($lat2)) - sin(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($lon2) - deg2rad($lon1)))) + 360) % 360;
-    \Drupal::logger('bearing')->info('bearing ' . $bearing . ' ' . print_r(func_get_args(), 1));
     return $bearing;
   }
 
@@ -41,9 +40,9 @@ class StreetViewer {
     $groups = $this->dataFetcher->getNextStreetviewSegmentSet($streetname);
     if (!$groups) {
       \Drupal::logger('everylane')->info('Failed to fetch next segment set ' . $streetname);
-      return;
+      return FALSE;
     }
-    $this->createStreetViewImagesForSegmentSet($groups);
+    return $this->createStreetViewImagesForSegmentSet($groups);
   }
 
   /**
@@ -54,7 +53,7 @@ class StreetViewer {
     /** @var Segment[] $segments */
     foreach ($groups as $segments) {
       foreach ($segments as $segment) {
-        $this->createStreetViewImagesForSegment($segment);
+        return $this->createStreetViewImagesForSegment($segment);
       }
     }
   }
@@ -74,7 +73,6 @@ class StreetViewer {
       }
       // If previous point is same as current point or next point, skip it.
       if ($point2->equals($point1)) {
-        \Drupal::logger('everylane')->info('Skipping point equal to previous ' . $i . ' ' . print_r($point1, 1));
         continue;
       }
       $bearing = $this->getBearing($point1, $point2);
@@ -87,10 +85,12 @@ class StreetViewer {
         ':num' => $success,
         ':seg_id' => $segment->seg_id,
       ]);
+      return $segment->streetname;
     }
     else {
       \Drupal::logger('everylane')
         ->info('Failed to save street view for segment ' . $segment->seg_id . ' section ');
+      return FALSE;
     }
   }
 
@@ -105,7 +105,6 @@ class StreetViewer {
     static $seen = [];
     // Don't fetch the same point twice.
     if (!empty($seen[$point->y() . ',' . $point->x()])) {
-      \Drupal::logger('everylane')->info('Skipping seen ' . print_r($point, 1));
       return 1;
     }
     $seen[$point->y() . ',' . $point->x()] = $point->y() . ',' . $point->x();
