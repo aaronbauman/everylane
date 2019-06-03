@@ -142,6 +142,8 @@ class Tweeter {
   public function getStreetTweetText($groups) {
     $segment = current(current($groups));
     $name = trim(str_replace('  ', ' ', ucwords(strtolower($segment->streetname))));
+    // Strip cardinals, since we're merging them anyway.
+    $name = preg_replace('/^[NESW]\ /', '', $name);
     $count = count($groups);
     $length = 0;
     $types = [];

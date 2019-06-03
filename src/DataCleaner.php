@@ -19,7 +19,7 @@ class DataCleaner {
     }
     // Remove leading directionals.
     $street = preg_replace('/^[NESW]\ /', '', $street);
-    $street = preg_replace('/\ PARKWAY/', ' PKWY', $street);
+    $street = preg_replace('/\ PARKWAY$/', ' PKWY', $street);
     $street = preg_replace('/\ ROAD$/', ' RD', $street);
     $street = preg_replace('/\ AVENUE$/', ' AVE', $street);
     $street = preg_replace('/\ AV$/', ' AVE', $street);
