@@ -4,5 +4,4 @@ description: everylane bot
 package: Custom
 core: 8.x
 dependencies:
-  - geocoder
   - geophp

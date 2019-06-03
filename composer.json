@@ -9,7 +9,6 @@
     ],
     "require": {
         "php": ">=5.6.0",
-        "drupal/geocoder": "^2.2",
         "j7mbo/twitter-api-php": "^1.0",
         "drupal/geophp": "^1.0@beta",
         "emcconville/google-map-polyline-encoding-tool": "^1.3"
