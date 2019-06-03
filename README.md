@@ -2,7 +2,7 @@ Everylane
 ---------
 
 #### Who?
-I am a Drupal developer, and I like to ride bikes.
+I am a Drupal developer, and I like to ride bikes. 
 
 #### What?
 This Drupal module is designed to orchestrate the twitter bot [Every Lane Philly](https://twitter.com/everylanephilly) into posting pictures of bike lanes, with inspiration from [every lot bot](https://github.com/fitnr/everylotbot).
@@ -38,7 +38,8 @@ curl -sSL https://www.drupal.org/download-latest/tar.gz | tar -xz --strip-compon
 php core/scripts/drupal quick-start standard
 
 # Add and enable drush and everylane module
-composer require aaronbauman/everylane drush/drush
+# Note: everylane drush commands require drush/drush:^9
+composer require drupal/everylane drush/drush
 drush en everylane -y
 ```
 
@@ -80,7 +81,16 @@ Minimum required fields are:
 * `type` - bike lane type, e.g. "Parking protected", "Off street trail", etc. May not be necessary if you don't want this in your tweet text.
 * `shape__length` - length, in ~feet. May not be necessary if you don't want this in your tweet text. TODO: calculate distance based on geometries.
 
+NB: If you're using the quick install method above, consider a sqlite GUI tool like https://tableplus.io/ to help import your datasource.
+
 ## Sources
 For Philadelphia, primary data source is [https://www.opendataphilly.org/dataset/bike-network](https://www.opendataphilly.org/dataset/bike-network)
 
 The Map there is old, but I posted a new one here from most recent data (9 months old as of this writing): [https://aaron-bauman.carto.com/builder/50af099f-3e5a-47b3-8ab9-a604528a4f0d/embed](https://aaron-bauman.carto.com/builder/50af099f-3e5a-47b3-8ab9-a604528a4f0d/embed)
+
+## Known limitations
+* Very rudimentary duplicate filtering. Depending on the source data, you may end up generating some duplicates or near-duplicates.
+* Overpass and underpass handling is limited. When two streets overlap vertically, google street view static API doesn't provide any way to specify which layer to capture. The result is some street view images are highways instead of underpasses.
+* No handling of "no image found" response
+* Limited off-street street view availability. Google's street view is mostly auto-routes. Some off-road paths are available.
+* Bearings may be 180 degrees opposite of traffic / bike routes. This mostly depends on whether the geometry is defined in the same order as the flow of traffic.
